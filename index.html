@@ -7,6 +7,11 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --scene-scale:1;
+  --tx:0deg;--ty:0deg;
+  --mx:50%;--my:50%;
+}
 body{
   width:100vw;height:100vh;overflow:hidden;
   font-family:"Inter",sans-serif;
@@ -18,16 +23,19 @@ body{
 header{
   position:relative;z-index:20;
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 40px;height:64px;
+  padding:0 clamp(16px,4vw,40px);height:clamp(54px,9vw,64px);
   border-bottom:0.5px solid rgba(253,255,237,0.08);
   background:rgba(6,8,16,0.7);
   backdrop-filter:blur(12px);
   flex-shrink:0;
+  opacity:0;animation:headerIn 1s ease-out forwards;animation-delay:1.5s;
 }
+@keyframes headerIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
 .header-logo{display:flex;align-items:center}
+.header-logo svg{height:clamp(18px,3.2vw,28px);width:auto}
 .header-right{
-  font-size:10px;letter-spacing:0.2em;text-transform:uppercase;
-  color:rgba(253,255,237,0.3);font-weight:200;
+  font-size:clamp(8px,1.6vw,10px);letter-spacing:0.2em;text-transform:uppercase;
+  color:rgba(253,255,237,0.3);font-weight:200;white-space:nowrap;
 }
 .header-right a{
   color:rgba(253,255,237,0.45);text-decoration:none;
@@ -36,15 +44,86 @@ header{
 }
 .header-right a:hover{color:#FDFFED}
 
+/* GRAIN cinematográfico sobre toda a página, como nos posters de referência */
+.grain{
+  position:fixed;inset:0;z-index:90;pointer-events:none;
+  opacity:0.085;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  animation:grainshift 1s steps(4) infinite;
+}
+@keyframes grainshift{0%{transform:translate(0,0)}25%{transform:translate(-1.5%,1.5%)}50%{transform:translate(1.5%,-1%)}75%{transform:translate(-1%,1%)}100%{transform:translate(0,0)}}
+
+/* INTRO — sensação de aproximação que se FUNDE no site, sem corte */
+.intro{
+  position:fixed;inset:0;z-index:200;background:#060810;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  opacity:1;animation:introOut 1.15s ease-out forwards;animation-delay:1.3s;
+}
+.intro-core{
+  width:90px;height:90px;border-radius:50%;
+  background:radial-gradient(circle, #FDFFED 0%, rgba(239,112,27,0.6) 40%, transparent 74%);
+  animation:introCore 1.3s cubic-bezier(.22,.7,.2,1) forwards;
+  filter:blur(1px);
+}
+@keyframes introCore{
+  0%{transform:scale(0.04);opacity:0.45;filter:blur(9px)}
+  100%{transform:scale(1);opacity:1;filter:blur(2px)}
+}
+.intro-flare{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 50%, rgba(253,255,237,0.5), rgba(239,112,27,0.15) 32%, transparent 64%);
+  opacity:0;animation:introFlare 1.3s ease-in forwards;
+}
+@keyframes introFlare{0%,55%{opacity:0}78%{opacity:0.45}100%{opacity:0.18}}
+@keyframes introOut{to{opacity:0;visibility:hidden}}
+@media (prefers-reduced-motion: reduce){
+  .intro{display:none}
+  header,.dock,.scene-content{opacity:1 !important;animation:none !important;transform:none !important}
+}
+
 /* CENA PRINCIPAL */
 .scene{
   flex:1;position:relative;
   display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  box-shadow:inset 0 0 180px 50px rgba(0,0,0,0.55);
+}
+.scene::before{
+  content:'';position:absolute;inset:-15%;z-index:0;pointer-events:none;
   background:
+    radial-gradient(ellipse 50% 45% at 74% 28%, rgba(239,112,27,0.16) 0%, transparent 60%),
     radial-gradient(ellipse 55% 60% at 50% 45%, rgba(45,100,45,0.3) 0%, rgba(25,70,30,0.12) 40%, transparent 70%),
     radial-gradient(ellipse 80% 70% at 50% 50%, rgba(12,28,70,0.5) 0%, transparent 85%);
-  overflow:hidden;
+  animation:nebulabreathe 50s ease-in-out infinite;
 }
+@keyframes nebulabreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08) rotate(2deg)}}
+
+/* poeira cósmica flutuando — dá vida orgânica à cena */
+.dust{position:absolute;inset:0;z-index:2;pointer-events:none;}
+.dust-p{position:absolute;border-radius:50%;pointer-events:none;}
+@keyframes dustfloat1{0%,100%{transform:translate(0,0)}50%{transform:translate(36px,-26px)}}
+@keyframes dustfloat2{0%,100%{transform:translate(0,0)}50%{transform:translate(-32px,22px)}}
+@keyframes dustfloat3{0%,100%{transform:translate(0,0)}50%{transform:translate(22px,30px)}}
+
+/* campo de estrelas com drift lento, independente da escala da cena */
+.starfield{
+  position:absolute;inset:0;z-index:1;pointer-events:none;
+  animation:starfielddrift 240s linear infinite;
+}
+@keyframes starfielddrift{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.star{position:absolute;background:#fff;border-radius:50%;pointer-events:none;transition:transform 0.45s cubic-bezier(.2,.8,.2,1);}
+
+/* wrapper que carrega TODA a cena orbital — escala/inclina como um bloco só, e se materializa junto com o fim da intro */
+.scene-content{
+  position:absolute;inset:0;z-index:5;
+  transform-style:preserve-3d;
+  transform:perspective(1400px) rotateX(var(--ty)) rotateY(var(--tx)) scale(var(--scene-scale));
+  transition:transform 0.5s cubic-bezier(.2,.8,.2,1);
+  will-change:transform;
+  opacity:0;animation:contentReveal 1.4s ease-out forwards;animation-delay:0.95s;
+}
+@keyframes contentReveal{to{opacity:1}}
+.orbit-field{position:absolute;inset:0;transition:transform 0.5s cubic-bezier(.2,.8,.2,1);}
 .ring{position:absolute;border-radius:50%;border:0.5px solid rgba(255,255,255,0.06);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
 
 /* S ORBITAL */
@@ -56,16 +135,52 @@ header{
   animation:spulse 4s ease-in-out infinite;
 }
 @keyframes spulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.04)}}
-.s-halo{position:absolute;inset:-30px;border-radius:50%;background:radial-gradient(circle,rgba(253,255,237,0.05) 0%,transparent 70%);animation:halopulse 4s ease-in-out infinite;}
+.s-halo{position:absolute;inset:-70px;border-radius:50%;filter:blur(3px);
+  background:radial-gradient(circle,rgba(253,255,237,0.12) 0%,rgba(239,112,27,0.07) 38%,transparent 72%);
+  animation:halopulse 4s ease-in-out infinite;}
 @keyframes halopulse{0%,100%{opacity:0.4}50%{opacity:0.9}}
+.s-beam{
+  position:absolute;top:-60vh;left:50%;width:1px;height:160vh;
+  transform:translateX(-50%);pointer-events:none;mix-blend-mode:screen;opacity:0.55;
+  background:linear-gradient(to bottom, transparent 0%, rgba(239,112,27,0.4) 42%, rgba(253,255,237,0.6) 50%, rgba(239,112,27,0.4) 58%, transparent 100%);
+  animation:beamflicker 7s ease-in-out infinite;
+}
+@keyframes beamflicker{0%,100%{opacity:0.35}50%{opacity:0.65}}
 .s-ring1{position:absolute;top:50%;left:50%;width:190px;height:66px;margin-left:-95px;margin-top:-33px;border-radius:50%;border:1px solid rgba(253,255,237,0.22);animation:sring1 12s linear infinite;}
 @keyframes sring1{from{transform:rotateX(70deg) rotateZ(0deg)}to{transform:rotateX(70deg) rotateZ(360deg)}}
 .s-ring2{position:absolute;top:50%;left:50%;width:210px;height:56px;margin-left:-105px;margin-top:-28px;border-radius:50%;border:0.5px solid rgba(239,112,27,0.28);animation:sring2 18s linear infinite reverse;}
 @keyframes sring2{from{transform:rotateX(75deg) rotateZ(60deg)}to{transform:rotateX(75deg) rotateZ(420deg)}}
-.s-dot1{position:absolute;top:50%;left:50%;width:6px;height:6px;margin-left:-3px;margin-top:-3px;border-radius:50%;background:#FDFFED;box-shadow:0 0 8px rgba(253,255,237,0.9);animation:sdot1 12s linear infinite;}
+
+.s-dot1,.s-dot1-t,.s-dot1-t2{position:absolute;top:50%;left:50%;border-radius:50%;background:#FDFFED;animation:sdot1 12s linear infinite;}
+.s-dot1{width:6px;height:6px;margin-left:-3px;margin-top:-3px;box-shadow:0 0 8px rgba(253,255,237,0.9);}
+.s-dot1-t{width:4px;height:4px;margin-left:-2px;margin-top:-2px;opacity:0.35;filter:blur(0.5px);animation-delay:-0.35s;}
+.s-dot1-t2{width:3px;height:3px;margin-left:-1.5px;margin-top:-1.5px;opacity:0.16;filter:blur(0.8px);animation-delay:-0.7s;}
 @keyframes sdot1{0%{transform:rotateX(70deg) rotateZ(0deg) translateX(95px) rotateX(-70deg) rotateZ(0deg)}100%{transform:rotateX(70deg) rotateZ(360deg) translateX(95px) rotateX(-70deg) rotateZ(-360deg)}}
-.s-dot2{position:absolute;top:50%;left:50%;width:5px;height:5px;margin-left:-2.5px;margin-top:-2.5px;border-radius:50%;background:#EF701B;box-shadow:0 0 8px rgba(239,112,27,0.9);animation:sdot2 18s linear infinite reverse;}
+
+.s-dot2,.s-dot2-t,.s-dot2-t2{position:absolute;top:50%;left:50%;border-radius:50%;background:#EF701B;animation:sdot2 18s linear infinite reverse;}
+.s-dot2{width:5px;height:5px;margin-left:-2.5px;margin-top:-2.5px;box-shadow:0 0 8px rgba(239,112,27,0.9);}
+.s-dot2-t{width:3.5px;height:3.5px;margin-left:-1.75px;margin-top:-1.75px;opacity:0.32;filter:blur(0.5px);animation-delay:-0.5s;}
+.s-dot2-t2{width:2.5px;height:2.5px;margin-left:-1.25px;margin-top:-1.25px;opacity:0.15;filter:blur(0.8px);animation-delay:-1s;}
 @keyframes sdot2{0%{transform:rotateX(75deg) rotateZ(60deg) translateX(105px) rotateX(-75deg) rotateZ(-60deg)}100%{transform:rotateX(75deg) rotateZ(420deg) translateX(105px) rotateX(-75deg) rotateZ(-420deg)}}
+
+/* SISTEMA DE ANÉIS GALÁTICOS — elipses 3D entrelaçadas, elegantes, ao fundo */
+.galaxy-rings{position:absolute;top:50%;left:50%;width:0;height:0;z-index:6;pointer-events:none;}
+.g-ring{position:absolute;border-radius:50%;transform-style:preserve-3d;}
+.g-ring1{width:560px;height:190px;margin:-95px 0 0 -280px;border:0.5px solid rgba(253,255,237,0.10);
+  animation:gring1 75s linear infinite;}
+@keyframes gring1{from{transform:rotateX(73deg) rotateZ(12deg)}to{transform:rotateX(73deg) rotateZ(372deg)}}
+.g-ring2{width:680px;height:250px;margin:-125px 0 0 -340px;border:0.5px solid rgba(239,112,27,0.09);
+  animation:gring2 105s linear infinite reverse;}
+@keyframes gring2{from{transform:rotateX(67deg) rotateZ(-30deg)}to{transform:rotateX(67deg) rotateZ(330deg)}}
+.g-ring3{width:440px;height:400px;margin:-200px 0 0 -220px;border:0.5px solid rgba(253,255,237,0.07);
+  animation:gring3 140s linear infinite;}
+@keyframes gring3{from{transform:rotateX(58deg) rotateZ(68deg)}to{transform:rotateX(58deg) rotateZ(428deg)}}
+
+.g-marker{position:absolute;top:50%;left:50%;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;box-shadow:0 0 6px currentColor;}
+.g-marker1{background:#FDFFED;color:#FDFFED;animation:gmark1 75s linear infinite;}
+@keyframes gmark1{0%{transform:rotateX(73deg) rotateZ(12deg) translateX(280px) rotateX(-73deg) rotateZ(-12deg)}100%{transform:rotateX(73deg) rotateZ(372deg) translateX(280px) rotateX(-73deg) rotateZ(-372deg)}}
+.g-marker2{background:#EF701B;color:#EF701B;animation:gmark2 105s linear infinite reverse;}
+@keyframes gmark2{0%{transform:rotateX(67deg) rotateZ(-30deg) translateX(340px) rotateX(-67deg) rotateZ(30deg)}100%{transform:rotateX(67deg) rotateZ(330deg) translateX(340px) rotateX(-67deg) rotateZ(-330deg)}}
 
 /* ÓRBITAS */
 .orbit{position:absolute;top:50%;left:50%;width:0;height:0;z-index:8}
@@ -86,41 +201,78 @@ header{
 @keyframes co2{from{transform:translateY(-50%) rotate(-120deg)}to{transform:translateY(-50%) rotate(-480deg)}}
 @keyframes co3{from{transform:translateY(-50%) rotate(-240deg)}to{transform:translateY(-50%) rotate(120deg)}}
 @keyframes co4{from{transform:translateY(-50%) rotate(-300deg)}to{transform:translateY(-50%) rotate(-660deg)}}
-.orb-icon{width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(6,8,16,0.9);border:1.5px solid rgba(239,112,27,0.6);box-shadow:0 0 14px rgba(239,112,27,0.18);transition:all 0.3s;}
-.orb-sat:hover .orb-icon{border-color:#EF701B;box-shadow:0 0 26px rgba(239,112,27,0.45)}
-.orb-label{font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(239,112,27,0.75);font-weight:300;white-space:nowrap}
+
+/* anel cônico girando atrás de cada ícone — dá "vida" a um desenho estático */
+.orb-ring-spin{
+  position:absolute;top:0;left:50%;width:70px;height:70px;
+  margin-top:-6px;transform:translateX(-50%);border-radius:50%;
+  background:conic-gradient(from 0deg, transparent 0%, rgba(239,112,27,0.55) 6%, transparent 18%, transparent 100%);
+  opacity:0.55;animation:ringspin 7s linear infinite;z-index:0;pointer-events:none;
+}
+@keyframes ringspin{to{transform:translateX(-50%) rotate(360deg)}}
+
+.orb-icon{
+  position:relative;z-index:1;
+  width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:rgba(6,8,16,0.9);border:1.5px solid rgba(239,112,27,0.6);
+  box-shadow:0 0 14px rgba(239,112,27,0.18);
+  transition:border-color 0.3s, box-shadow 0.3s;
+  animation:iconbreathe 5s ease-in-out infinite;
+}
+.o1 .orb-icon{animation-delay:0s}
+.o2 .orb-icon{animation-delay:-1.3s}
+.o3 .orb-icon{animation-delay:-2.6s}
+.o4 .orb-icon{animation-delay:-3.9s}
+@keyframes iconbreathe{
+  0%,100%{box-shadow:0 0 14px rgba(239,112,27,0.18);filter:brightness(1)}
+  50%{box-shadow:0 0 24px rgba(239,112,27,0.4);filter:brightness(1.12)}
+}
+.orb-icon::after{
+  content:'';position:absolute;inset:-9px;border-radius:50%;
+  border:1px solid rgba(239,112,27,0.55);opacity:0;transform:scale(0.8);
+  pointer-events:none;
+}
+.orb-sat:hover .orb-icon{border-color:#EF701B;box-shadow:0 0 30px rgba(239,112,27,0.5)}
+.orb-sat:hover .orb-icon::after{animation:ringping 0.8s ease-out;}
+@keyframes ringping{0%{opacity:0.85;transform:scale(0.8)}100%{opacity:0;transform:scale(1.7)}}
+.orb-label{font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(239,112,27,0.75);font-weight:300;white-space:nowrap;transition:color 0.3s,letter-spacing 0.3s;}
+.orb-sat:hover .orb-label{color:#FDFFED;letter-spacing:0.22em}
 
 /* DOCK INFERIOR — EM BREVE */
 .dock{
   position:relative;z-index:20;
   display:flex;align-items:center;justify-content:center;gap:0;
-  padding:0 40px;height:90px;
+  padding:0 clamp(16px,4vw,40px);height:clamp(64px,11vw,90px);
   border-top:0.5px solid rgba(253,255,237,0.07);
   background:rgba(6,8,16,0.5);
   backdrop-filter:blur(8px);
   flex-shrink:0;
+  opacity:0;animation:dockIn 1s ease-out forwards;animation-delay:1.6s;
 }
+@keyframes dockIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 .dock-label{
   position:absolute;top:10px;left:50%;transform:translateX(-50%);
   font-size:8px;letter-spacing:0.22em;text-transform:uppercase;
   color:rgba(253,255,237,0.2);white-space:nowrap;
 }
-.dock-items{display:flex;gap:32px;align-items:center}
+.dock-items{display:flex;gap:clamp(18px,4vw,32px);align-items:center}
 .dock-item{
   display:flex;flex-direction:column;align-items:center;gap:6px;
   cursor:default;opacity:0.4;transition:opacity 0.35s;
   position:relative;
 }
-.dock-item:hover{opacity:0.75}
+.dock-item:hover{opacity:0.8}
 .dock-icon{
-  width:46px;height:46px;border-radius:50%;
+  width:clamp(38px,8vw,46px);height:clamp(38px,8vw,46px);border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   background:rgba(6,8,16,0.8);
   border:1px solid rgba(253,255,237,0.1);
   transition:border-color 0.35s;
   position:relative;
+  animation:dockbreathe 6s ease-in-out infinite;
 }
-.dock-item:hover .dock-icon{border-color:rgba(253,255,237,0.22)}
+@keyframes dockbreathe{0%,100%{filter:brightness(1)}50%{filter:brightness(1.18)}}
+.dock-item:hover .dock-icon{border-color:rgba(253,255,237,0.3)}
 .dock-name{font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(253,255,237,0.35)}
 .soon-tag{
   display:none;position:absolute;top:-24px;left:50%;transform:translateX(-50%);
@@ -131,71 +283,115 @@ header{
 }
 .dock-item:hover .soon-tag{display:block}
 
-.star{position:absolute;background:#fff;border-radius:50%;pointer-events:none}
+/* RESPONSIVIDADE — a cena orbital inteira escala como um bloco único */
+@media (max-width:900px){:root{--scene-scale:0.78}}
+@media (max-width:600px){:root{--scene-scale:0.58}}
+@media (max-width:420px){:root{--scene-scale:0.46}}
+@media (max-height:520px){:root{--scene-scale:0.5}}
+@media (max-width:600px){
+  .header-right{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  .scene-content{transition:none}
+}
 </style>
 </head>
 <body>
 
+<!-- INTRO: sensação de aproximação ao planeta -->
+<div class="intro" id="intro">
+  <div class="intro-flare"></div>
+  <div class="intro-core"></div>
+</div>
+
+<!-- GRAIN cinematográfico -->
+<div class="grain"></div>
+
 <!-- HEADER -->
 <header>
-  <div class="header-logo"><svg viewBox="0 0 3443 392" fill="none" xmlns="http://www.w3.org/2000/svg" style="height:28px;width:auto"><path d="M94.7407 153.813C94.7407 163.637 121.881 164.969 157.013 166.634C219.452 169.798 307.2 174.127 307.033 230.239C307.033 294.176 233.771 309.328 155.182 309.328C76.7583 309.162 11.6553 299.671 3.33008 230.239H94.7407C104.731 247.555 127.875 252.051 155.182 252.051C182.322 252.051 215.623 247.555 215.623 230.239C215.623 220.415 188.482 218.917 153.35 217.251C90.9111 214.088 3.16357 209.759 3.33008 153.813C3.33008 89.876 76.5918 74.5576 155.182 74.5576C233.605 75.0571 298.708 83.8818 307.033 153.813H215.623C205.632 136.164 182.488 132.001 155.182 132.001C128.042 132.001 94.7407 135.998 94.7407 153.813ZM333.754 304.167V80.3853H595.664V137.663H421.002V166.301H595.664V218.084H421.002V246.723H595.664V304.167H333.754ZM645.529 80.0522H732.777V232.903H907.44V303.833H645.529V80.0522ZM951.31 80.3853L1019.58 235.733L1087.84 80.3853H1186.08L1071.36 304.167H967.627L853.073 80.3853H951.31ZM1303.55 145.155L1272.74 211.257H1334.18L1303.55 145.155ZM1131.55 304.167L1251.6 80.3853H1355.33L1475.38 304.167H1377.14L1359.49 265.871H1247.43L1229.78 304.167H1131.55ZM1674.34 153.813C1674.34 163.637 1701.48 164.969 1736.62 166.634C1799.05 169.798 1886.8 174.127 1886.64 230.239C1886.64 294.176 1813.37 309.328 1734.78 309.328C1656.36 309.162 1591.26 299.671 1582.93 230.239H1674.34C1684.33 247.555 1707.48 252.051 1734.78 252.051C1761.92 252.051 1795.23 247.555 1795.23 230.239C1795.23 220.415 1768.08 218.917 1732.95 217.251C1670.51 214.088 1582.77 209.759 1582.93 153.813C1582.93 89.876 1656.19 74.5576 1734.78 74.5576C1813.21 75.0571 1878.31 83.8818 1886.64 153.813H1795.23C1785.23 136.164 1762.09 132.001 1734.78 132.001C1707.64 132.001 1674.34 135.998 1674.34 153.813ZM2000.6 183.951H2107.17C2112.33 183.951 2116.82 182.119 2120.49 178.456C2124.32 174.626 2126.15 170.131 2126.15 164.969C2126.15 159.641 2124.32 155.146 2120.49 151.482C2116.82 147.653 2112.33 145.821 2107.17 145.821H2000.6V183.951ZM1913.36 80.3853H2128.98C2175.1 79.8857 2214.23 118.681 2213.56 164.969C2214.23 211.091 2175.1 250.219 2128.98 249.553H2000.6V304.167H1913.36V80.3853ZM2350.84 145.155L2320.04 211.257H2381.48L2350.84 145.155ZM2178.84 304.167L2298.89 80.3853H2402.62L2522.67 304.167H2424.44L2406.79 265.871H2294.73L2277.08 304.167H2178.84ZM2727.72 211.091H2817.13C2811.64 286.684 2745.37 309.328 2664.78 309.328C2580.86 309.162 2511.6 284.852 2511.93 200.102V183.784C2511.6 99.2002 2580.86 74.8906 2664.78 74.5576C2745.37 74.7241 2811.64 97.3687 2817.13 172.795H2727.72C2719.56 150.816 2694.75 145.655 2664.78 145.655C2629.15 146.154 2598.85 152.481 2599.35 189.279V194.773C2598.85 231.238 2629.15 237.898 2664.78 238.397C2694.75 238.397 2719.73 233.069 2727.72 211.091ZM2846.68 304.167V80.3853H3108.59V137.663H2933.93V166.301H3108.59V218.084H2933.93V246.723H3108.59V304.167H2846.68ZM3227.23 153.813C3227.23 163.637 3254.37 164.969 3289.5 166.634C3351.94 169.798 3439.68 174.127 3439.52 230.239C3439.52 294.176 3366.26 309.328 3287.67 309.328C3209.24 309.162 3144.14 299.671 3135.81 230.239H3227.23C3237.22 247.555 3260.36 252.051 3287.67 252.051C3314.81 252.051 3348.11 247.555 3348.11 230.239C3348.11 220.415 3320.97 218.917 3285.83 217.251C3223.4 214.088 3135.65 209.759 3135.81 153.813C3135.81 89.876 3209.08 74.5576 3287.67 74.5576C3366.09 75.0571 3431.19 83.8818 3439.52 153.813H3348.11C3338.12 136.164 3314.97 132.001 3287.67 132.001C3260.53 132.001 3227.23 135.998 3227.23 153.813Z" fill="#FDFFED"/><path d="M1485.61 238.564H1572.86V304H1485.61V238.564Z" fill="#EF701B"/></svg></div>
+  <div class="header-logo"><svg viewBox="0 0 3443 392" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M94.7407 153.813C94.7407 163.637 121.881 164.969 157.013 166.634C219.452 169.798 307.2 174.127 307.033 230.239C307.033 294.176 233.771 309.328 155.182 309.328C76.7583 309.162 11.6553 299.671 3.33008 230.239H94.7407C104.731 247.555 127.875 252.051 155.182 252.051C182.322 252.051 215.623 247.555 215.623 230.239C215.623 220.415 188.482 218.917 153.35 217.251C90.9111 214.088 3.16357 209.759 3.33008 153.813C3.33008 89.876 76.5918 74.5576 155.182 74.5576C233.605 75.0571 298.708 83.8818 307.033 153.813H215.623C205.632 136.164 182.488 132.001 155.182 132.001C128.042 132.001 94.7407 135.998 94.7407 153.813ZM333.754 304.167V80.3853H595.664V137.663H421.002V166.301H595.664V218.084H421.002V246.723H595.664V304.167H333.754ZM645.529 80.0522H732.777V232.903H907.44V303.833H645.529V80.0522ZM951.31 80.3853L1019.58 235.733L1087.84 80.3853H1186.08L1071.36 304.167H967.627L853.073 80.3853H951.31ZM1303.55 145.155L1272.74 211.257H1334.18L1303.55 145.155ZM1131.55 304.167L1251.6 80.3853H1355.33L1475.38 304.167H1377.14L1359.49 265.871H1247.43L1229.78 304.167H1131.55ZM1674.34 153.813C1674.34 163.637 1701.48 164.969 1736.62 166.634C1799.05 169.798 1886.8 174.127 1886.64 230.239C1886.64 294.176 1813.37 309.328 1734.78 309.328C1656.36 309.162 1591.26 299.671 1582.93 230.239H1674.34C1684.33 247.555 1707.48 252.051 1734.78 252.051C1761.92 252.051 1795.23 247.555 1795.23 230.239C1795.23 220.415 1768.08 218.917 1732.95 217.251C1670.51 214.088 1582.77 209.759 1582.93 153.813C1582.93 89.876 1656.19 74.5576 1734.78 74.5576C1813.21 75.0571 1878.31 83.8818 1886.64 153.813H1795.23C1785.23 136.164 1762.09 132.001 1734.78 132.001C1707.64 132.001 1674.34 135.998 1674.34 153.813ZM2000.6 183.951H2107.17C2112.33 183.951 2116.82 182.119 2120.49 178.456C2124.32 174.626 2126.15 170.131 2126.15 164.969C2126.15 159.641 2124.32 155.146 2120.49 151.482C2116.82 147.653 2112.33 145.821 2107.17 145.821H2000.6V183.951ZM1913.36 80.3853H2128.98C2175.1 79.8857 2214.23 118.681 2213.56 164.969C2214.23 211.091 2175.1 250.219 2128.98 249.553H2000.6V304.167H1913.36V80.3853ZM2350.84 145.155L2320.04 211.257H2381.48L2350.84 145.155ZM2178.84 304.167L2298.89 80.3853H2402.62L2522.67 304.167H2424.44L2406.79 265.871H2294.73L2277.08 304.167H2178.84ZM2727.72 211.091H2817.13C2811.64 286.684 2745.37 309.328 2664.78 309.328C2580.86 309.162 2511.6 284.852 2511.93 200.102V183.784C2511.6 99.2002 2580.86 74.8906 2664.78 74.5576C2745.37 74.7241 2811.64 97.3687 2817.13 172.795H2727.72C2719.56 150.816 2694.75 145.655 2664.78 145.655C2629.15 146.154 2598.85 152.481 2599.35 189.279V194.773C2598.85 231.238 2629.15 237.898 2664.78 238.397C2694.75 238.397 2719.73 233.069 2727.72 211.091ZM2846.68 304.167V80.3853H3108.59V137.663H2933.93V166.301H3108.59V218.084H2933.93V246.723H3108.59V304.167H2846.68ZM3227.23 153.813C3227.23 163.637 3254.37 164.969 3289.5 166.634C3351.94 169.798 3439.68 174.127 3439.52 230.239C3439.52 294.176 3366.26 309.328 3287.67 309.328C3209.24 309.162 3144.14 299.671 3135.81 230.239H3227.23C3237.22 247.555 3260.36 252.051 3287.67 252.051C3314.81 252.051 3348.11 247.555 3348.11 230.239C3348.11 220.415 3320.97 218.917 3285.83 217.251C3223.4 214.088 3135.65 209.759 3135.81 153.813C3135.81 89.876 3209.08 74.5576 3287.67 74.5576C3366.09 75.0571 3431.19 83.8818 3439.52 153.813H3348.11C3338.12 136.164 3314.97 132.001 3287.67 132.001C3260.53 132.001 3227.23 135.998 3227.23 153.813Z" fill="#FDFFED"/><path d="M1485.61 238.564H1572.86V304H1485.61V238.564Z" fill="#EF701B"/></svg></div>
   <div class="header-right">Powered by <a href="https://www.selva.agency" target="_blank">SELVA Agency</a></div>
 </header>
 
 <!-- CENA ORBITAL -->
 <div class="scene" id="sc">
-  <div class="ring" style="width:270px;height:270px"></div>
-  <div class="ring" style="width:390px;height:390px"></div>
-  <div class="ring" style="width:510px;height:510px"></div>
+  <div class="starfield" id="starfield"></div>
+  <div class="dust" id="dust"></div>
 
-  <!-- S orbital -->
-  <div class="s-wrap">
-    <div class="s-halo"></div>
-    <div class="s-ring1"></div>
-    <div class="s-ring2"></div>
-    <div class="s-dot1"></div>
-    <div class="s-dot2"></div>
-    <svg width="130" height="130" viewBox="0 0 523 523" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="261.5" cy="261.5" r="256" stroke="rgba(253,255,237,0.08)" stroke-width="1"/>
-      <path d="M257.4 141.2C238.2 151.1 219 162.9 200.3 176.3C170.7 197.6 144.4 221.4 123.2 245.9C114.3 235.9 109.7 223.5 111.5 208.1C114.9 177.4 133.7 156.8 167.3 146.9C190.3 140.1 219.9 138.2 257.4 141.2Z" fill="#FDFFED"/>
-      <path d="M410.6 317.3C404.7 369.7 356.7 391.6 263.9 384.1C283.8 373.9 303.8 361.7 323.3 347.7C352.3 326.9 378.1 303.6 399 279.6C407.8 289.7 412.3 302 410.6 317.3Z" fill="#FDFFED"/>
-      <path d="M210.4 219.2C210.4 219.2 210.9 222 223.7 225.4C234.3 228.4 249.8 230.8 266.3 233.4L266.7 233.5C311.4 240.8 367.6 249.9 394.8 275.3C374.1 299.1 348.6 322.1 319.7 342.8C297.3 358.9 274.6 372.3 252.4 383C250.8 382.9 249.3 382.7 247.7 382.5C178.1 374.6 103.8 359.9 103.1 283.8L103.1 282.2C103.8 281.1 104.6 280 105.4 278.8L200.6 289.4L201.7 291.8C207.8 305.7 224.7 313.7 255 317.1C288.2 320.8 310.5 316.6 311.6 306.4C311.6 306.3 311.1 303.5 298.3 300C288.2 297.2 274.3 294.8 255.7 291.9L255.3 291.8C210.8 284.6 154.6 275.5 127.4 250.3C148 226.5 173.8 202.8 203.8 181.2C225.4 165.8 247.3 152.7 268.7 142.2C270.6 142.4 272.4 142.6 274.3 142.8C347.2 151.4 418.3 166 418.9 241.7L418.9 244C418.3 244.9 417.7 245.8 417 246.7L321.3 236.1L320.3 233.6C314.3 219.6 297.8 211.8 267 208.4C232.7 204.6 211.6 208.6 210.4 219.2Z" fill="#FDFFED"/>
-      <path d="M263.9 384.1C234.1 399.3 204.6 410 177.2 415.2C158.9 418.7 142.5 419.6 128.3 418.1C106.1 415.6 89.3 407.1 79.2 393C62.5 369.7 66.2 334.2 89.6 293C98.5 277.3 109.8 261.5 123.2 245.9C124.5 247.4 125.9 248.9 127.4 250.3C119.2 259.8 111.8 269.4 105.4 278.8L103.1 278.6L103.1 282.2C75 324.8 66.3 364.7 84.1 389.5C93.4 402.5 109.1 410 129.1 412.2C161.8 415.8 205.8 405.5 252.4 383C256.3 383.4 260.1 383.8 263.9 384.1Z" fill="#FDFFED" opacity="0.65"/>
-      <path d="M434 231C424.8 247.2 413 263.6 399 279.6C397.7 278.2 396.3 276.7 394.8 275.3C403 265.9 410.5 256.3 417 246.7L418.9 247V244C422.5 238.6 425.8 233.3 428.8 228C451 189 454.7 155.8 439.5 134.6C414.6 99.8 344.7 104.9 268.7 142.2C264.8 141.8 261.1 141.5 257.4 141.2C263.1 138.2 268.7 135.4 274.4 132.8C299.1 121.4 323.5 113.2 346.4 108.8C392.9 99.9 427.7 107.8 444.4 131C461.1 154.3 457.4 189.8 434 231Z" fill="#FDFFED" opacity="0.65"/>
-      <ellipse cx="261.5" cy="261.5" rx="245" ry="88" stroke="rgba(253,255,237,0.12)" stroke-width="1" fill="none" transform="rotate(-20 261.5 261.5)"/>
-    </svg>
-  </div>
+  <div class="scene-content" id="sceneContent">
+    <div class="ring" style="width:270px;height:270px"></div>
+    <div class="ring" style="width:390px;height:390px"></div>
+    <div class="ring" style="width:510px;height:510px"></div>
 
-  <!-- ACESSOS órbita 1 -->
-  <div class="orbit o1">
-    <a class="orb-sat" href="https://docs.google.com/document/d/1qH9AT_SiAj9yXKZBgTd2Qs7jEm9Lacw_jXwqcXF8wmo/edit?tab=t.0" target="_blank">
-      <div class="orb-icon"><svg viewBox="0 0 177 145" width="28" height="23"><path d="M176.6 55.8C176.6 104.5 137.1 144.1 88.3 144.1C39.5 144.1 0 104.5 0 55.8H32.5C32.5 86.6 57.5 111.5 88.3 111.5C119.1 111.5 144.1 86.6 144.1 55.8H176.6Z" fill="#FDFFED"/><path d="M144.1 55.8C144.1 86.6 119.1 111.5 88.3 111.5C57.5 111.5 32.5 86.6 32.5 55.8H144.1Z" fill="#EF701B"/><path d="M144.1 55.8H32.5C32.5 25 57.5 0 88.3 0C119.1 0 144.1 25 144.1 55.8Z" fill="rgba(253,255,237,0.3)"/></svg></div>
-      <div class="orb-label">Acessos</div>
-    </a>
-  </div>
+    <div class="galaxy-rings">
+      <div class="g-ring g-ring1"></div>
+      <div class="g-ring g-ring2"></div>
+      <div class="g-ring g-ring3"></div>
+      <div class="g-marker g-marker1"></div>
+      <div class="g-marker g-marker2"></div>
+    </div>
 
-  <!-- BRAND TRACKER órbita 2 -->
-  <div class="orbit o2">
-    <a class="orb-sat" href="https://meta-ads-dashboard-production-7c73.up.railway.app/" target="_blank">
-      <div class="orb-icon"><svg viewBox="0 0 144 145" width="26" height="26"><path d="M143.5 0H113.8V144.1H143.5V0Z" fill="#EF701B"/><path d="M92.9 31.5H63.2V144.1H92.9V31.5Z" fill="#FDFFED"/><path d="M66.7 73.2L40.9 58.3L0 129.2L25.8 144.1L66.7 73.2Z" fill="#FDFFED"/></svg></div>
-      <div class="orb-label">Brand Tracker</div>
-    </a>
-  </div>
+    <!-- S orbital -->
+    <div class="s-wrap">
+      <div class="s-beam"></div>
+      <div class="s-halo"></div>
+      <div class="s-ring1"></div>
+      <div class="s-ring2"></div>
+      <div class="s-dot1-t2"></div>
+      <div class="s-dot1-t"></div>
+      <div class="s-dot1"></div>
+      <div class="s-dot2-t2"></div>
+      <div class="s-dot2-t"></div>
+      <div class="s-dot2"></div>
+      <svg width="130" height="130" viewBox="0 0 523 523" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="261.5" cy="261.5" r="256" stroke="rgba(253,255,237,0.08)" stroke-width="1"/>
+        <path d="M257.4 141.2C238.2 151.1 219 162.9 200.3 176.3C170.7 197.6 144.4 221.4 123.2 245.9C114.3 235.9 109.7 223.5 111.5 208.1C114.9 177.4 133.7 156.8 167.3 146.9C190.3 140.1 219.9 138.2 257.4 141.2Z" fill="#FDFFED"/>
+        <path d="M410.6 317.3C404.7 369.7 356.7 391.6 263.9 384.1C283.8 373.9 303.8 361.7 323.3 347.7C352.3 326.9 378.1 303.6 399 279.6C407.8 289.7 412.3 302 410.6 317.3Z" fill="#FDFFED"/>
+        <path d="M210.4 219.2C210.4 219.2 210.9 222 223.7 225.4C234.3 228.4 249.8 230.8 266.3 233.4L266.7 233.5C311.4 240.8 367.6 249.9 394.8 275.3C374.1 299.1 348.6 322.1 319.7 342.8C297.3 358.9 274.6 372.3 252.4 383C250.8 382.9 249.3 382.7 247.7 382.5C178.1 374.6 103.8 359.9 103.1 283.8L103.1 282.2C103.8 281.1 104.6 280 105.4 278.8L200.6 289.4L201.7 291.8C207.8 305.7 224.7 313.7 255 317.1C288.2 320.8 310.5 316.6 311.6 306.4C311.6 306.3 311.1 303.5 298.3 300C288.2 297.2 274.3 294.8 255.7 291.9L255.3 291.8C210.8 284.6 154.6 275.5 127.4 250.3C148 226.5 173.8 202.8 203.8 181.2C225.4 165.8 247.3 152.7 268.7 142.2C270.6 142.4 272.4 142.6 274.3 142.8C347.2 151.4 418.3 166 418.9 241.7L418.9 244C418.3 244.9 417.7 245.8 417 246.7L321.3 236.1L320.3 233.6C314.3 219.6 297.8 211.8 267 208.4C232.7 204.6 211.6 208.6 210.4 219.2Z" fill="#FDFFED"/>
+        <path d="M263.9 384.1C234.1 399.3 204.6 410 177.2 415.2C158.9 418.7 142.5 419.6 128.3 418.1C106.1 415.6 89.3 407.1 79.2 393C62.5 369.7 66.2 334.2 89.6 293C98.5 277.3 109.8 261.5 123.2 245.9C124.5 247.4 125.9 248.9 127.4 250.3C119.2 259.8 111.8 269.4 105.4 278.8L103.1 278.6L103.1 282.2C75 324.8 66.3 364.7 84.1 389.5C93.4 402.5 109.1 410 129.1 412.2C161.8 415.8 205.8 405.5 252.4 383C256.3 383.4 260.1 383.8 263.9 384.1Z" fill="#FDFFED" opacity="0.65"/>
+        <path d="M434 231C424.8 247.2 413 263.6 399 279.6C397.7 278.2 396.3 276.7 394.8 275.3C403 265.9 410.5 256.3 417 246.7L418.9 247V244C422.5 238.6 425.8 233.3 428.8 228C451 189 454.7 155.8 439.5 134.6C414.6 99.8 344.7 104.9 268.7 142.2C264.8 141.8 261.1 141.5 257.4 141.2C263.1 138.2 268.7 135.4 274.4 132.8C299.1 121.4 323.5 113.2 346.4 108.8C392.9 99.9 427.7 107.8 444.4 131C461.1 154.3 457.4 189.8 434 231Z" fill="#FDFFED" opacity="0.65"/>
+        <ellipse cx="261.5" cy="261.5" rx="245" ry="88" stroke="rgba(253,255,237,0.12)" stroke-width="1" fill="none" transform="rotate(-20 261.5 261.5)"/>
+      </svg>
+    </div>
 
-  <!-- CLIPPER órbita 4 -->
-  <div class="orbit o4">
-    <a class="orb-sat" href="https://spin-clipper.up.railway.app/" target="_blank">
-      <div class="orb-icon"><svg viewBox="0 0 146 145" width="26" height="26"><path d="M120.2 37.9L38.8 119.3L1 81.4L12.2 70.2C19.6 77.6 29.8 82.1 41 82.1C63.7 82.1 82.1 63.7 82.1 41C82.1 29.8 77.5 19.6 70.2 12.2L82.4 0L120.2 37.9Z" fill="#FDFFED"/><path d="M145 62.6L63.6 144.1L38.8 119.3L120.2 37.9L145 62.6Z" fill="#EF701B"/></svg></div>
-      <div class="orb-label">Clipper</div>
-    </a>
-  </div>
+    <!-- camada de órbitas — reage ao mouse separadamente do S, dando profundidade -->
+    <div class="orbit-field" id="orbitField">
+      <!-- ACESSOS órbita 1 -->
+      <div class="orbit o1">
+        <a class="orb-sat" href="https://docs.google.com/document/d/1qH9AT_SiAj9yXKZBgTd2Qs7jEm9Lacw_jXwqcXF8wmo/edit?tab=t.0" target="_blank">
+          <div class="orb-ring-spin"></div>
+          <div class="orb-icon"><svg viewBox="0 0 177 145" width="28" height="23"><path d="M176.6 55.8C176.6 104.5 137.1 144.1 88.3 144.1C39.5 144.1 0 104.5 0 55.8H32.5C32.5 86.6 57.5 111.5 88.3 111.5C119.1 111.5 144.1 86.6 144.1 55.8H176.6Z" fill="#FDFFED"/><path d="M144.1 55.8C144.1 86.6 119.1 111.5 88.3 111.5C57.5 111.5 32.5 86.6 32.5 55.8H144.1Z" fill="#EF701B"/><path d="M144.1 55.8H32.5C32.5 25 57.5 0 88.3 0C119.1 0 144.1 25 144.1 55.8Z" fill="rgba(253,255,237,0.3)"/></svg></div>
+          <div class="orb-label">Acessos</div>
+        </a>
+      </div>
 
-  <!-- TRELLO órbita 3 -->
-  <div class="orbit o3">
-    <a class="orb-sat" href="https://trello.com/invite/b/6939734a4c99cdd9caac475f/ATTIf0b8176bfedb0a5a97f6d698928955de7A1AC4D9/gtm" target="_blank">
-      <div class="orb-icon"><svg viewBox="0 0 145 145" width="26" height="26"><path d="M119.2 37.9L37.8 119.3L0 81.4L65.5 15.9L81.4 0L119.2 37.9Z" fill="#FDFFED"/><path d="M144 62.6L62.6 144.1L37.8 119.3L119.2 37.9L144 62.6Z" fill="#EF701B"/></svg></div>
-      <div class="orb-label">Trello</div>
-    </a>
+      <!-- BRAND TRACKER órbita 2 -->
+      <div class="orbit o2">
+        <a class="orb-sat" href="https://meta-ads-dashboard-production-7c73.up.railway.app/" target="_blank">
+          <div class="orb-ring-spin"></div>
+          <div class="orb-icon"><svg viewBox="0 0 144 145" width="26" height="26"><path d="M143.5 0H113.8V144.1H143.5V0Z" fill="#EF701B"/><path d="M92.9 31.5H63.2V144.1H92.9V31.5Z" fill="#FDFFED"/><path d="M66.7 73.2L40.9 58.3L0 129.2L25.8 144.1L66.7 73.2Z" fill="#FDFFED"/></svg></div>
+          <div class="orb-label">Brand Tracker</div>
+        </a>
+      </div>
+
+      <!-- CLIPPER órbita 4 -->
+      <div class="orbit o4">
+        <a class="orb-sat" href="https://spin-clipper.up.railway.app/" target="_blank">
+          <div class="orb-ring-spin"></div>
+          <div class="orb-icon"><svg viewBox="0 0 146 145" width="26" height="26"><path d="M120.2 37.9L38.8 119.3L1 81.4L12.2 70.2C19.6 77.6 29.8 82.1 41 82.1C63.7 82.1 82.1 63.7 82.1 41C82.1 29.8 77.5 19.6 70.2 12.2L82.4 0L120.2 37.9Z" fill="#FDFFED"/><path d="M145 62.6L63.6 144.1L38.8 119.3L120.2 37.9L145 62.6Z" fill="#EF701B"/></svg></div>
+          <div class="orb-label">Clipper</div>
+        </a>
+      </div>
+
+      <!-- TRELLO órbita 3 -->
+      <div class="orbit o3">
+        <a class="orb-sat" href="https://trello.com/invite/b/6939734a4c99cdd9caac475f/ATTIf0b8176bfedb0a5a97f6d698928955de7A1AC4D9/gtm" target="_blank">
+          <div class="orb-ring-spin"></div>
+          <div class="orb-icon"><svg viewBox="0 0 145 145" width="26" height="26"><path d="M119.2 37.9L37.8 119.3L0 81.4L65.5 15.9L81.4 0L119.2 37.9Z" fill="#FDFFED"/><path d="M144 62.6L62.6 144.1L37.8 119.3L119.2 37.9L144 62.6Z" fill="#EF701B"/></svg></div>
+          <div class="orb-label">Trello</div>
+        </a>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -214,13 +410,93 @@ header{
 </div>
 
 <script>
-var sc=document.getElementById('sc');
+// intro: remove do DOM ao terminar, ou ao clicar (pular)
+var intro=document.getElementById('intro');
+if(intro){
+  function clearIntro(){intro.remove();}
+  intro.addEventListener('animationend',clearIntro);
+  intro.addEventListener('click',clearIntro);
+  setTimeout(clearIntro,2700);
+}
+
+// estrelas
+var scene=document.getElementById('sc');
+var starfield=document.getElementById('starfield');
+var stars=[];
 for(var i=0;i<160;i++){
   var s=document.createElement('div');
   s.className='star';
   var sz=Math.random()*1.8+0.3;
-  s.style.cssText='width:'+sz+'px;height:'+sz+'px;top:'+(Math.random()*100)+'%;left:'+(Math.random()*100)+'%;opacity:'+(Math.random()*0.45+0.05);
-  sc.appendChild(s);
+  var leftPct=Math.random()*100, topPct=Math.random()*100;
+  s.style.cssText='width:'+sz+'px;height:'+sz+'px;top:'+topPct+'%;left:'+leftPct+'%;opacity:'+(Math.random()*0.45+0.05);
+  starfield.appendChild(s);
+  stars.push({el:s,leftPct:leftPct,topPct:topPct});
+}
+
+// poeira cósmica flutuando — textura orgânica
+var dust=document.getElementById('dust');
+var dustAnims=['dustfloat1','dustfloat2','dustfloat3'];
+var dustColors=['rgba(253,255,237,0.16)','rgba(239,112,27,0.14)','rgba(253,255,237,0.1)'];
+for(var d=0;d<9;d++){
+  var p=document.createElement('div');
+  p.className='dust-p';
+  var psz=6+Math.random()*10;
+  var anim=dustAnims[d%dustAnims.length];
+  var dur=(28+Math.random()*30).toFixed(1);
+  var delay=(-Math.random()*dur).toFixed(1);
+  p.style.cssText='width:'+psz+'px;height:'+psz+'px;top:'+(Math.random()*100)+'%;left:'+(Math.random()*100)+'%;'+
+    'background:'+dustColors[d%dustColors.length]+';filter:blur('+(2+Math.random()*2).toFixed(1)+'px);'+
+    'animation:'+anim+' '+dur+'s ease-in-out infinite;animation-delay:'+delay+'s;';
+  dust.appendChild(p);
+}
+
+// parallax 3D do sistema (S + anéis) + camada extra de profundidade nas órbitas + estrelas reagindo ao cursor
+var sceneContent=document.getElementById('sceneContent');
+var orbitField=document.getElementById('orbitField');
+var canHover=window.matchMedia('(hover:hover)').matches;
+var reduceMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+var mouseX=0, mouseY=0, sceneW=0, sceneH=0, rafPending=false;
+var STAR_RADIUS=130, STAR_STRENGTH=20;
+
+function updateStars(){
+  rafPending=false;
+  for(var i=0;i<stars.length;i++){
+    var st=stars[i];
+    var px=(st.leftPct/100)*sceneW, py=(st.topPct/100)*sceneH;
+    var dx=px-mouseX, dy=py-mouseY;
+    var dist=Math.sqrt(dx*dx+dy*dy);
+    if(dist<STAR_RADIUS && dist>0.01){
+      var f=(1-dist/STAR_RADIUS)*STAR_STRENGTH;
+      st.el.style.transform='translate('+((dx/dist)*f).toFixed(1)+'px,'+((dy/dist)*f).toFixed(1)+'px)';
+    } else if(st.el.style.transform){
+      st.el.style.transform='';
+    }
+  }
+}
+
+if(canHover && !reduceMotion){
+  scene.addEventListener('mousemove',function(e){
+    var r=scene.getBoundingClientRect();
+    sceneW=r.width;sceneH=r.height;
+    var x=(e.clientX-r.left)/r.width;
+    var y=(e.clientY-r.top)/r.height;
+    mouseX=x*r.width;mouseY=y*r.height;
+
+    var tx=(x-0.5)*16;
+    var ty=(0.5-y)*16;
+    sceneContent.style.setProperty('--tx',tx+'deg');
+    sceneContent.style.setProperty('--ty',ty+'deg');
+    orbitField.style.transform='rotate('+((x-0.5)*6)+'deg)';
+
+    if(!rafPending){rafPending=true;requestAnimationFrame(updateStars);}
+  });
+  scene.addEventListener('mouseleave',function(){
+    sceneContent.style.setProperty('--tx','0deg');
+    sceneContent.style.setProperty('--ty','0deg');
+    orbitField.style.transform='rotate(0deg)';
+    for(var i=0;i<stars.length;i++){stars[i].el.style.transform='';}
+  });
 }
 </script>
 </body>
