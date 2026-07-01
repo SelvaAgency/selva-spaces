@@ -44,7 +44,6 @@ header{
 }
 .header-right a:hover{color:#FDFFED}
 
-/* GRAIN cinematográfico sobre toda a página, como nos posters de referência */
 .grain{
   position:fixed;inset:0;z-index:90;pointer-events:none;
   opacity:0.085;mix-blend-mode:overlay;
@@ -53,7 +52,6 @@ header{
 }
 @keyframes grainshift{0%{transform:translate(0,0)}25%{transform:translate(-1.5%,1.5%)}50%{transform:translate(1.5%,-1%)}75%{transform:translate(-1%,1%)}100%{transform:translate(0,0)}}
 
-/* INTRO — sensação de aproximação que se FUNDE no site, sem corte */
 .intro{
   position:fixed;inset:0;z-index:200;background:#060810;
   display:flex;align-items:center;justify-content:center;overflow:hidden;
@@ -81,7 +79,6 @@ header{
   header,.dock,.scene-content{opacity:1 !important;animation:none !important;transform:none !important}
 }
 
-/* CENA PRINCIPAL */
 .scene{
   flex:1;position:relative;
   display:flex;align-items:center;justify-content:center;
@@ -98,14 +95,12 @@ header{
 }
 @keyframes nebulabreathe{0%,100%{transform:scale(1)}50%{transform:scale(1.08) rotate(2deg)}}
 
-/* poeira cósmica flutuando — dá vida orgânica à cena */
 .dust{position:absolute;inset:0;z-index:2;pointer-events:none;}
 .dust-p{position:absolute;border-radius:50%;pointer-events:none;}
 @keyframes dustfloat1{0%,100%{transform:translate(0,0)}50%{transform:translate(36px,-26px)}}
 @keyframes dustfloat2{0%,100%{transform:translate(0,0)}50%{transform:translate(-32px,22px)}}
 @keyframes dustfloat3{0%,100%{transform:translate(0,0)}50%{transform:translate(22px,30px)}}
 
-/* campo de estrelas com drift lento, independente da escala da cena */
 .starfield{
   position:absolute;inset:0;z-index:1;pointer-events:none;
   animation:starfielddrift 240s linear infinite;
@@ -113,7 +108,6 @@ header{
 @keyframes starfielddrift{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 .star{position:absolute;background:#fff;border-radius:50%;pointer-events:none;transition:transform 0.45s cubic-bezier(.2,.8,.2,1);}
 
-/* wrapper que carrega TODA a cena orbital — escala/inclina como um bloco só, e se materializa junto com o fim da intro */
 .scene-content{
   position:absolute;inset:0;z-index:5;
   transform-style:preserve-3d;
@@ -126,7 +120,6 @@ header{
 .orbit-field{position:absolute;inset:0;transition:transform 0.5s cubic-bezier(.2,.8,.2,1);}
 .ring{position:absolute;border-radius:50%;border:0.5px solid rgba(255,255,255,0.06);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
 
-/* S ORBITAL */
 .s-wrap{
   position:absolute;top:50%;left:50%;
   transform:translate(-50%,-50%);
@@ -163,7 +156,6 @@ header{
 .s-dot2-t2{width:2.5px;height:2.5px;margin-left:-1.25px;margin-top:-1.25px;opacity:0.15;filter:blur(0.8px);animation-delay:-1s;}
 @keyframes sdot2{0%{transform:rotateX(75deg) rotateZ(60deg) translateX(105px) rotateX(-75deg) rotateZ(-60deg)}100%{transform:rotateX(75deg) rotateZ(420deg) translateX(105px) rotateX(-75deg) rotateZ(-420deg)}}
 
-/* SISTEMA DE ANÉIS GALÁTICOS — elipses 3D entrelaçadas, elegantes, ao fundo */
 .galaxy-rings{position:absolute;top:50%;left:50%;width:0;height:0;z-index:6;pointer-events:none;}
 .g-ring{position:absolute;border-radius:50%;transform-style:preserve-3d;}
 .g-ring1{width:560px;height:190px;margin:-95px 0 0 -280px;border:0.5px solid rgba(253,255,237,0.10);
@@ -182,7 +174,6 @@ header{
 .g-marker2{background:#EF701B;color:#EF701B;animation:gmark2 105s linear infinite reverse;}
 @keyframes gmark2{0%{transform:rotateX(67deg) rotateZ(-30deg) translateX(340px) rotateX(-67deg) rotateZ(30deg)}100%{transform:rotateX(67deg) rotateZ(330deg) translateX(340px) rotateX(-67deg) rotateZ(-330deg)}}
 
-/* ÓRBITAS */
 .orbit{position:absolute;top:50%;left:50%;width:0;height:0;z-index:8}
 .o1{animation:orb1 18s linear infinite}
 .o2{animation:orb2 24s linear infinite}
@@ -202,7 +193,6 @@ header{
 @keyframes co3{from{transform:translateY(-50%) rotate(-240deg)}to{transform:translateY(-50%) rotate(120deg)}}
 @keyframes co4{from{transform:translateY(-50%) rotate(-300deg)}to{transform:translateY(-50%) rotate(-660deg)}}
 
-/* anel cônico girando atrás de cada ícone — dá "vida" a um desenho estático */
 .orb-ring-spin{
   position:absolute;top:0;left:50%;width:70px;height:70px;
   margin-top:-6px;transform:translateX(-50%);border-radius:50%;
@@ -238,7 +228,6 @@ header{
 .orb-label{font-size:8px;letter-spacing:0.16em;text-transform:uppercase;color:rgba(239,112,27,0.75);font-weight:300;white-space:nowrap;transition:color 0.3s,letter-spacing 0.3s;}
 .orb-sat:hover .orb-label{color:#FDFFED;letter-spacing:0.22em}
 
-/* DOCK INFERIOR — EM BREVE */
 .dock{
   position:relative;z-index:20;
   display:flex;align-items:center;justify-content:center;gap:0;
@@ -283,7 +272,6 @@ header{
 }
 .dock-item:hover .soon-tag{display:block}
 
-/* RESPONSIVIDADE — a cena orbital inteira escala como um bloco único */
 @media (max-width:900px){:root{--scene-scale:0.78}}
 @media (max-width:600px){:root{--scene-scale:0.58}}
 @media (max-width:420px){:root{--scene-scale:0.46}}
@@ -298,22 +286,18 @@ header{
 </head>
 <body>
 
-<!-- INTRO: sensação de aproximação ao planeta -->
 <div class="intro" id="intro">
   <div class="intro-flare"></div>
   <div class="intro-core"></div>
 </div>
 
-<!-- GRAIN cinematográfico -->
 <div class="grain"></div>
 
-<!-- HEADER -->
 <header>
   <div class="header-logo"><svg viewBox="0 0 3443 392" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M94.7407 153.813C94.7407 163.637 121.881 164.969 157.013 166.634C219.452 169.798 307.2 174.127 307.033 230.239C307.033 294.176 233.771 309.328 155.182 309.328C76.7583 309.162 11.6553 299.671 3.33008 230.239H94.7407C104.731 247.555 127.875 252.051 155.182 252.051C182.322 252.051 215.623 247.555 215.623 230.239C215.623 220.415 188.482 218.917 153.35 217.251C90.9111 214.088 3.16357 209.759 3.33008 153.813C3.33008 89.876 76.5918 74.5576 155.182 74.5576C233.605 75.0571 298.708 83.8818 307.033 153.813H215.623C205.632 136.164 182.488 132.001 155.182 132.001C128.042 132.001 94.7407 135.998 94.7407 153.813ZM333.754 304.167V80.3853H595.664V137.663H421.002V166.301H595.664V218.084H421.002V246.723H595.664V304.167H333.754ZM645.529 80.0522H732.777V232.903H907.44V303.833H645.529V80.0522ZM951.31 80.3853L1019.58 235.733L1087.84 80.3853H1186.08L1071.36 304.167H967.627L853.073 80.3853H951.31ZM1303.55 145.155L1272.74 211.257H1334.18L1303.55 145.155ZM1131.55 304.167L1251.6 80.3853H1355.33L1475.38 304.167H1377.14L1359.49 265.871H1247.43L1229.78 304.167H1131.55ZM1674.34 153.813C1674.34 163.637 1701.48 164.969 1736.62 166.634C1799.05 169.798 1886.8 174.127 1886.64 230.239C1886.64 294.176 1813.37 309.328 1734.78 309.328C1656.36 309.162 1591.26 299.671 1582.93 230.239H1674.34C1684.33 247.555 1707.48 252.051 1734.78 252.051C1761.92 252.051 1795.23 247.555 1795.23 230.239C1795.23 220.415 1768.08 218.917 1732.95 217.251C1670.51 214.088 1582.77 209.759 1582.93 153.813C1582.93 89.876 1656.19 74.5576 1734.78 74.5576C1813.21 75.0571 1878.31 83.8818 1886.64 153.813H1795.23C1785.23 136.164 1762.09 132.001 1734.78 132.001C1707.64 132.001 1674.34 135.998 1674.34 153.813ZM2000.6 183.951H2107.17C2112.33 183.951 2116.82 182.119 2120.49 178.456C2124.32 174.626 2126.15 170.131 2126.15 164.969C2126.15 159.641 2124.32 155.146 2120.49 151.482C2116.82 147.653 2112.33 145.821 2107.17 145.821H2000.6V183.951ZM1913.36 80.3853H2128.98C2175.1 79.8857 2214.23 118.681 2213.56 164.969C2214.23 211.091 2175.1 250.219 2128.98 249.553H2000.6V304.167H1913.36V80.3853ZM2350.84 145.155L2320.04 211.257H2381.48L2350.84 145.155ZM2178.84 304.167L2298.89 80.3853H2402.62L2522.67 304.167H2424.44L2406.79 265.871H2294.73L2277.08 304.167H2178.84ZM2727.72 211.091H2817.13C2811.64 286.684 2745.37 309.328 2664.78 309.328C2580.86 309.162 2511.6 284.852 2511.93 200.102V183.784C2511.6 99.2002 2580.86 74.8906 2664.78 74.5576C2745.37 74.7241 2811.64 97.3687 2817.13 172.795H2727.72C2719.56 150.816 2694.75 145.655 2664.78 145.655C2629.15 146.154 2598.85 152.481 2599.35 189.279V194.773C2598.85 231.238 2629.15 237.898 2664.78 238.397C2694.75 238.397 2719.73 233.069 2727.72 211.091ZM2846.68 304.167V80.3853H3108.59V137.663H2933.93V166.301H3108.59V218.084H2933.93V246.723H3108.59V304.167H2846.68ZM3227.23 153.813C3227.23 163.637 3254.37 164.969 3289.5 166.634C3351.94 169.798 3439.68 174.127 3439.52 230.239C3439.52 294.176 3366.26 309.328 3287.67 309.328C3209.24 309.162 3144.14 299.671 3135.81 230.239H3227.23C3237.22 247.555 3260.36 252.051 3287.67 252.051C3314.81 252.051 3348.11 247.555 3348.11 230.239C3348.11 220.415 3320.97 218.917 3285.83 217.251C3223.4 214.088 3135.65 209.759 3135.81 153.813C3135.81 89.876 3209.08 74.5576 3287.67 74.5576C3366.09 75.0571 3431.19 83.8818 3439.52 153.813H3348.11C3338.12 136.164 3314.97 132.001 3287.67 132.001C3260.53 132.001 3227.23 135.998 3227.23 153.813Z" fill="#FDFFED"/><path d="M1485.61 238.564H1572.86V304H1485.61V238.564Z" fill="#EF701B"/></svg></div>
   <div class="header-right">Powered by <a href="https://www.selva.agency" target="_blank">SELVA Agency</a></div>
 </header>
 
-<!-- CENA ORBITAL -->
 <div class="scene" id="sc">
   <div class="starfield" id="starfield"></div>
   <div class="dust" id="dust"></div>
@@ -331,7 +315,6 @@ header{
       <div class="g-marker g-marker2"></div>
     </div>
 
-    <!-- S orbital -->
     <div class="s-wrap">
       <div class="s-beam"></div>
       <div class="s-halo"></div>
@@ -354,14 +337,13 @@ header{
       </svg>
     </div>
 
-    <!-- camada de órbitas — reage ao mouse separadamente do S, dando profundidade -->
     <div class="orbit-field" id="orbitField">
-      <!-- ACESSOS órbita 1 -->
+      <!-- CONTRATOS órbita 1 -->
       <div class="orbit o1">
-        <a class="orb-sat" href="https://docs.google.com/document/d/1qH9AT_SiAj9yXKZBgTd2Qs7jEm9Lacw_jXwqcXF8wmo/edit?tab=t.0" target="_blank">
+        <a class="orb-sat" href="https://meta-ads-dashboard-production-7c73.up.railway.app/contracts" target="_blank">
           <div class="orb-ring-spin"></div>
           <div class="orb-icon"><svg viewBox="0 0 177 145" width="28" height="23"><path d="M176.6 55.8C176.6 104.5 137.1 144.1 88.3 144.1C39.5 144.1 0 104.5 0 55.8H32.5C32.5 86.6 57.5 111.5 88.3 111.5C119.1 111.5 144.1 86.6 144.1 55.8H176.6Z" fill="#FDFFED"/><path d="M144.1 55.8C144.1 86.6 119.1 111.5 88.3 111.5C57.5 111.5 32.5 86.6 32.5 55.8H144.1Z" fill="#EF701B"/><path d="M144.1 55.8H32.5C32.5 25 57.5 0 88.3 0C119.1 0 144.1 25 144.1 55.8Z" fill="rgba(253,255,237,0.3)"/></svg></div>
-          <div class="orb-label">Acessos</div>
+          <div class="orb-label">Contratos</div>
         </a>
       </div>
 
@@ -383,12 +365,12 @@ header{
         </a>
       </div>
 
-      <!-- TRELLO órbita 3 -->
+      <!-- REPORT órbita 3 -->
       <div class="orbit o3">
-        <a class="orb-sat" href="https://trello.com/invite/b/6939734a4c99cdd9caac475f/ATTIf0b8176bfedb0a5a97f6d698928955de7A1AC4D9/gtm" target="_blank">
+        <a class="orb-sat" href="https://meta-ads-dashboard-production-7c73.up.railway.app/reports" target="_blank">
           <div class="orb-ring-spin"></div>
-          <div class="orb-icon"><svg viewBox="0 0 145 145" width="26" height="26"><path d="M119.2 37.9L37.8 119.3L0 81.4L65.5 15.9L81.4 0L119.2 37.9Z" fill="#FDFFED"/><path d="M144 62.6L62.6 144.1L37.8 119.3L119.2 37.9L144 62.6Z" fill="#EF701B"/></svg></div>
-          <div class="orb-label">Trello</div>
+          <div class="orb-icon"><svg viewBox="0 0 169 145" width="24" height="20"><path d="M168.8 42.2C168.8 53.3 164.5 63.4 157.5 71L144.1 84.4H144L84.2 24.5L96.8 12.4C104.4 4.3 115.5 0 126.6 0C149.9 0 168.8 18.9 168.8 42.2Z" fill="#EF701B"/><path d="M144.1 84.4L84.4 144.1L11.4 71C4.3 63.4 0 53.3 0 42.2C0 18.9 18.9 0 42.2 0C53.3 0 63.5 4.3 71 11.4L84.2 24.5L144.1 84.4Z" fill="#FDFFED"/></svg></div>
+          <div class="orb-label">Report</div>
         </a>
       </div>
     </div>
@@ -398,19 +380,10 @@ header{
 <!-- DOCK EM BREVE -->
 <div class="dock">
   <div class="dock-label">em breve</div>
-  <div class="dock-items">
-    <div class="dock-item">
-      <div class="dock-icon">
-        <div class="soon-tag">em breve</div>
-        <svg viewBox="0 0 169 145" width="24" height="20"><path d="M168.8 42.2C168.8 53.3 164.5 63.4 157.5 71L144.1 84.4H144L84.2 24.5L96.8 12.4C104.4 4.3 115.5 0 126.6 0C149.9 0 168.8 18.9 168.8 42.2Z" fill="#EF701B"/><path d="M144.1 84.4L84.4 144.1L11.4 71C4.3 63.4 0 53.3 0 42.2C0 18.9 18.9 0 42.2 0C53.3 0 63.5 4.3 71 11.4L84.2 24.5L144.1 84.4Z" fill="#FDFFED"/></svg>
-      </div>
-      <div class="dock-name">Report</div>
-    </div>
-  </div>
+  <div class="dock-items"></div>
 </div>
 
 <script>
-// intro: remove do DOM ao terminar, ou ao clicar (pular)
 var intro=document.getElementById('intro');
 if(intro){
   function clearIntro(){intro.remove();}
@@ -419,7 +392,6 @@ if(intro){
   setTimeout(clearIntro,2700);
 }
 
-// estrelas
 var scene=document.getElementById('sc');
 var starfield=document.getElementById('starfield');
 var stars=[];
@@ -433,7 +405,6 @@ for(var i=0;i<160;i++){
   stars.push({el:s,leftPct:leftPct,topPct:topPct});
 }
 
-// poeira cósmica flutuando — textura orgânica
 var dust=document.getElementById('dust');
 var dustAnims=['dustfloat1','dustfloat2','dustfloat3'];
 var dustColors=['rgba(253,255,237,0.16)','rgba(239,112,27,0.14)','rgba(253,255,237,0.1)'];
@@ -450,7 +421,6 @@ for(var d=0;d<9;d++){
   dust.appendChild(p);
 }
 
-// parallax 3D do sistema (S + anéis) + camada extra de profundidade nas órbitas + estrelas reagindo ao cursor
 var sceneContent=document.getElementById('sceneContent');
 var orbitField=document.getElementById('orbitField');
 var canHover=window.matchMedia('(hover:hover)').matches;
@@ -482,13 +452,11 @@ if(canHover && !reduceMotion){
     var x=(e.clientX-r.left)/r.width;
     var y=(e.clientY-r.top)/r.height;
     mouseX=x*r.width;mouseY=y*r.height;
-
     var tx=(x-0.5)*16;
     var ty=(0.5-y)*16;
     sceneContent.style.setProperty('--tx',tx+'deg');
     sceneContent.style.setProperty('--ty',ty+'deg');
     orbitField.style.transform='rotate('+((x-0.5)*6)+'deg)';
-
     if(!rafPending){rafPending=true;requestAnimationFrame(updateStars);}
   });
   scene.addEventListener('mouseleave',function(){
